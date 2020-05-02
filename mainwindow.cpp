@@ -87,7 +87,7 @@ void MainWindow::on_horizontalSlider_10_sliderMoved(int position)
 
 void MainWindow::on_horizontalSlider_11_sliderMoved(int position)
 {
-    ui->scene_widget->setLight((float)position/10.0f);
+    ui->scene_widget->setLight((float)position/1000.0f);
 }
 
 void MainWindow::on_radioButton_3_toggled(bool checked)
@@ -98,4 +98,29 @@ void MainWindow::on_radioButton_3_toggled(bool checked)
 void MainWindow::on_radioButton_4_toggled(bool checked)
 {
     ui->scene_widget->setType(GL_TRIANGLE_FAN);
+}
+
+void MainWindow::on_horizontalSlider_12_sliderMoved(int position)
+{
+    ui->scene_widget->setDeep(position);
+}
+
+void MainWindow::on_radioButton_5_toggled(bool checked)
+{
+    ui->scene_widget->setMat(checked);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    ui->scene_widget->setCamXY();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    ui->scene_widget->setCamXZ();
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    ui->scene_widget->setCamYZ();
 }

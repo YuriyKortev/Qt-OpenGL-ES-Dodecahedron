@@ -403,6 +403,9 @@
         <property name="text">
          <string>Закрасить</string>
         </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
        <widget class="QSlider" name="horizontalSlider_10">
         <property name="geometry">
@@ -446,10 +449,10 @@
          </rect>
         </property>
         <property name="maximum">
-         <number>700</number>
+         <number>2000</number>
         </property>
         <property name="value">
-         <number>49</number>
+         <number>1000</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -520,7 +523,7 @@
          </rect>
         </property>
         <property name="title">
-         <string>GroupBox</string>
+         <string>Primitive</string>
         </property>
         <widget class="QRadioButton" name="radioButton_3">
          <property name="geometry">
@@ -549,6 +552,132 @@
          </property>
          <property name="text">
           <string>Triangle</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QSlider" name="horizontalSlider_12">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>200</y>
+          <width>160</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="maximum">
+         <number>15</number>
+        </property>
+        <property name="value">
+         <number>9</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_12">
+        <property name="geometry">
+         <rect>
+          <x>190</x>
+          <y>180</y>
+          <width>47</width>
+          <height>13</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Level</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="geometry">
+         <rect>
+          <x>160</x>
+          <y>500</y>
+          <width>120</width>
+          <height>80</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Material</string>
+        </property>
+        <widget class="QRadioButton" name="radioButton_5">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>84</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Глянец</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QRadioButton" name="radioButton_6">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>50</y>
+           <width>84</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Матовый</string>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="geometry">
+         <rect>
+          <x>180</x>
+          <y>230</y>
+          <width>120</width>
+          <height>121</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Camera</string>
+        </property>
+        <widget class="QPushButton" name="pushButton">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>30</y>
+           <width>80</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>XY</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_3">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>60</y>
+           <width>80</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>XZ</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_4">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>90</y>
+           <width>80</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>YZ</string>
          </property>
         </widget>
        </widget>

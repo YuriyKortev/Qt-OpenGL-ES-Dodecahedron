@@ -27,11 +27,16 @@ Scene::Scene(QWidget* parent)
 
     face=true;
     axes=true;
-    fill=false;
+    fill=true;
+    mat_flag=true;
 
     type=GL_POLYGON;
 
-    l={{0.0f,5.0f,0.0f,0.0f},{0.3f,0.3f,0.3f},{4.9f,4.9f,4.9f}};
+    deep=9;
+
+    l={{5.0f,5.0f,5.0f,0.0f},{1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f},{1.9f,1.9f,1.9f}};
+    glnc={{1.9f,1.9f,1.9f},{0.9f,0.9f,0.9f},{5.0f,5.0f,6.0f},256.0f};
+    mat={{1.1f,1.1f,1.1f},{0.5f,0.5f,0.5f},{0.3f,0.3f,0.3f},8.0f};
 }
 
 void Scene::setProject(bool f)
@@ -120,7 +125,7 @@ void Scene::setResolution(int res)
 
 void Scene::setLight(float lght)
 {
-    l.ld={lght,lght,lght};
+    l.la={lght,lght,lght};
     update();
 }
 
@@ -130,13 +135,49 @@ void Scene::setType(GLenum type)
     update();
 }
 
+void Scene::setDeep(int d)
+{
+    this->deep=d;
+    update();
+}
+
+void Scene::setMat(bool f)
+{
+    this->mat_flag=f;
+    update();
+}
+
+void Scene::setCamXY()
+{
+    this->cam_angle=90.0f;
+    this->cam_y=0.0f;
+    this->cam_r=4.0f;
+    update();
+
+}
+
+void Scene::setCamXZ()
+{
+    this->cam_angle=0.0f;
+    this->cam_r=0.0001f;
+    this->cam_y=4.0f;
+}
+
+void Scene::setCamYZ()
+{
+    this->cam_angle=0.0f;
+    this->cam_y=0.0f;
+    this->cam_r=4.0f;
+    update();
+}
+
 
 
 
 
 void Scene::initializeGL(){
     initializeOpenGLFunctions();
-    glClearColor(0.8f,0.8f,0.8f,1.0f);
+    glClearColor(0.8f,0.8f,0.8f,0.3f);
 
 
     def_sh=new QOpenGLShaderProgram;
@@ -161,33 +202,38 @@ void Scene::paintGL(){
     glViewport(0, 0, width() * retinaScale, height() * retinaScale);
     glClear(GL_COLOR_BUFFER_BIT);
 
-
-
-    if(face){
-        glEnable(GL_CULL_FACE);
-    }
-    else{
-         glDisable(GL_CULL_FACE);
-    }
+    face ? glEnable(GL_CULL_FACE) : glDisable(GL_CULL_FACE);
 
     glCullFace(GL_FRONT);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
     QMatrix4x4 matrix, projection;
+    QVector3D cam={this->cam_r*cosf(qDegreesToRadians(this->cam_angle)),this->cam_y,this->cam_r*sinf(qDegreesToRadians(this->cam_angle))};
+    Material m=mat_flag ? glnc : mat;
+
     if(persp)
         projection.perspective(70.0f, 2300.0f/1080.0f, 0.1f, 100.0f);
     else
         projection.ortho(-4,4,-2,2,-20,20);
 
-    matrix.lookAt({this->cam_r*cosf(qDegreesToRadians(this->cam_angle)),this->cam_y,this->cam_r*sinf(qDegreesToRadians(this->cam_angle))},{0.0f,0.0f,0.0f},{0,1,0});
+    matrix.lookAt(cam,{0.0f,0.0f,0.0f},{0,1,0});
     //matrix.rotate(100.0f * m_frame / 300, 0, 1, 0);
 
     def_sh->bind();
     def_sh->setUniformValue("matrix",projection*matrix);
     def_sh->setUniformValue("normal_m",matrix.normalMatrix());
     def_sh->setUniformValue("modelview",matrix);
-    def_sh->setUniformValue("LightPos",l.light_pos);
-    def_sh->setUniformValue("kd",l.kd);
-    def_sh->setUniformValue("ld",l.ld);
+    def_sh->setUniformValue("LightInfo.position",l.light_pos);
+    def_sh->setUniformValue("LightInfo.la",l.la);
+    def_sh->setUniformValue("LightInfo.ld",l.ld);
+    def_sh->setUniformValue("LightInfo.ls",l.ls);
+    def_sh->setUniformValue("MaterialInfo.ka",m.ka);
+    def_sh->setUniformValue("MaterialInfo.kd",m.kd);
+    def_sh->setUniformValue("MaterialInfo.ks",m.ks);
+    def_sh->setUniformValue("MaterialInfo.Shininess",m.Shininess);
     def_sh->release();
 
 
@@ -197,11 +243,10 @@ void Scene::paintGL(){
     spline_sh->release();
 
 
-    if(axes)
-       a->drawAxis(def_sh);
+    if(axes) a->drawAxis(def_sh);
 
     matrix.setToIdentity();
-    matrix.lookAt({this->cam_r*cosf(qDegreesToRadians(this->cam_angle)),this->cam_y,this->cam_r*sinf(qDegreesToRadians(this->cam_angle))},{0.0f,0.0f,0.0f},{0,1,0});
+    matrix.lookAt(cam,{0.0f,0.0f,0.0f},{0,1,0});
 
     matrix.translate(tr_x,tr_y,tr_z);
     matrix.rotate(angle_x,1,0,0);
@@ -211,22 +256,24 @@ void Scene::paintGL(){
 
 
     def_sh->bind();
-    def_sh->setUniformValue("matrix",projection*matrix);
     def_sh->setUniformValue("normal_m",matrix.normalMatrix());
     def_sh->setUniformValue("modelview",matrix);
-    def_sh->setUniformValue("LightPos",l.light_pos);
-    def_sh->setUniformValue("kd",l.kd);
-    def_sh->setUniformValue("ld",l.ld);
+    def_sh->setUniformValue("l.position",l.light_pos);
+    def_sh->setUniformValue("l.la",l.la);
+    def_sh->setUniformValue("l.ld",l.ld);
+    def_sh->setUniformValue("l.ls",l.ls);
+    def_sh->setUniformValue("material.ka",m.ka);
+    def_sh->setUniformValue("material.kd",m.kd);
+    def_sh->setUniformValue("material.ks",m.ks);
+    def_sh->setUniformValue("material.Shininess",m.Shininess);
     def_sh->release();
 
-    if(fill)
-        dode->drawDode(def_sh,GL_FILL,type);
-    else
-        dode->drawDode(def_sh,GL_LINE, type);
+
+    dode->drawDode(def_sh,fill ? GL_FILL : GL_LINE, type, projection*matrix, 1);
 
     ++m_frame;
 
-    update();
+
 }
 
 void Scene::wheelEvent(QWheelEvent *event)

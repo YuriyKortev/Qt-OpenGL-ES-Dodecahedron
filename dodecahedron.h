@@ -15,8 +15,9 @@ public:
     Dodecahedron();
     ~Dodecahedron();
 
-    void drawDode(QOpenGLShaderProgram* m_program,GLenum mode,GLenum type);
+    void drawDode(QOpenGLShaderProgram* m_program,GLenum mode,GLenum type,QMatrix4x4 mvp, int deep);
     void setResolution(int resolution);
+    void setResolution_pol(int resolution);
 
 private:
     QVector<QVector3D> start_p;

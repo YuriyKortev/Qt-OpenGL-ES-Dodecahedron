@@ -17,8 +17,16 @@
 
 struct Light{
     QVector4D light_pos;
-    QVector3D kd;
+    QVector3D la;
     QVector3D ld;
+    QVector3D ls;
+};
+
+struct Material{
+    QVector3D ka;
+    QVector3D kd;
+    QVector3D ks;
+    float Shininess;
 };
 
 class Scene : public QOpenGLWidget, protected QOpenGLFunctions
@@ -45,6 +53,12 @@ public:
     void setResolution(int res);
     void setLight(float l);
     void setType(GLenum type);
+    void setDeep(int d);
+    void setMat(bool f);
+
+    void setCamXY();
+    void setCamXZ();
+    void setCamYZ();
 protected:
 
 
@@ -77,6 +91,7 @@ private:
     bool axes;
     bool fill;
     bool mouse_flag;
+    bool mat_flag;
 
     GLfloat angle_x;
     GLfloat angle_y;
@@ -92,7 +107,10 @@ private:
 
     GLenum type;
 
+    int deep;
+
     Light l;
+    Material glnc,mat;
 };
 
 

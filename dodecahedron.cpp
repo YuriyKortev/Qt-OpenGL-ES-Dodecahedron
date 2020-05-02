@@ -51,7 +51,7 @@ Dodecahedron::Dodecahedron()
     crNormals();
 }
 
-void Dodecahedron::drawDode(QOpenGLShaderProgram* m_program, GLenum mode, GLenum type)
+void Dodecahedron::drawDode(QOpenGLShaderProgram* m_program, GLenum mode, GLenum type, QMatrix4x4 mvp, int deep)
 {
 
 
@@ -61,19 +61,29 @@ void Dodecahedron::drawDode(QOpenGLShaderProgram* m_program, GLenum mode, GLenum
     m_program->bind();
 
 
+
     m_program->setAttributeArray(0, points.data());
     m_program->setAttributeArray(2,normals.data());
-    m_program->setAttributeValue("colorAttr",{0.4f,0.3f,0.1f});
+    m_program->setAttributeValue("colorAttr",{0.4f,0.3f,0.1f,0.1f});
+
+
 
     m_program->enableAttributeArray(0);
     m_program->enableAttributeArray(2);
 
+    glPolygonMode(GL_FRONT_AND_BACK,mode);
 
+ //   mvp.scale(0.1,0.1,0.1);
 
-    for(int i=0;i<12;i++){
-        glPolygonMode(GL_FRONT_AND_BACK,mode);
-        glDrawElements(type,p_on_face,GL_UNSIGNED_SHORT,ind[i].data());
+    for(int j=0;j<deep;j++){
+
+        m_program->setUniformValue("matrix",mvp);
+        for(int i=0;i<ind.size();i++){
+            glDrawElements(type,p_on_face,GL_UNSIGNED_SHORT,ind[i].data());
+        }
+        mvp.scale(1.3,1.3,1.3);
     }
+
 
     //glDrawArrays(GL_LINE_STRIP,0,2);
 
@@ -139,6 +149,40 @@ void Dodecahedron::setResolution(int res)
     p_on_face=5*resolution;
 
     crNormals();
+}
+
+void Dodecahedron::setResolution_pol(int res)
+{
+    points=start_p;
+    ind=start_ind;
+    p_on_face=5;
+
+    if(res==1){
+        this->resolution=1;
+        crNormals();
+        return;
+    }
+
+
+    this->resolution=res;
+
+    for(int i=0;i<12;i++){
+
+        QVector3D center={0.0f,0.0f,0.0f};
+        for(auto& p : ind[i])center+=points[p];
+        center=center/center.length();
+        for(int k=1;k<res;k++){
+            QVector<GLushort> new_face;
+            for(int j=0;j<p_on_face;j++){
+                QVector3D vec=center-points[ind[i][j]];
+                vec=points[ind[i][j]] + vec* k / res;
+                points.append(vec);
+                new_face.append(points.size()-1);
+            }
+            ind.append(new_face);
+        }
+
+    }
 }
 
 void Dodecahedron::crNormals()

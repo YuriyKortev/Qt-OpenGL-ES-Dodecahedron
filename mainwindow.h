@@ -52,6 +52,16 @@ private slots:
 
     void on_radioButton_4_toggled(bool checked);
 
+    void on_horizontalSlider_12_sliderMoved(int position);
+
+    void on_radioButton_5_toggled(bool checked);
+
+    void on_pushButton_clicked();
+
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_4_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
